@@ -1,0 +1,492 @@
+Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+Dim num_partA As String
+Dim num_partB As String
+Dim folio As String
+Dim nparte As String
+Dim ERROR As Integer
+Dim valor As Integer
+Dim npart As String
+Dim j As Integer
+Dim k As Integer
+Dim smt As Integer
+Dim R1 As Integer
+Dim R2 As Integer
+Dim R3 As Integer
+Dim parte As Integer
+Dim R4 As Integer
+ 
+Dim cont_np As Integer
+Dim db As Database
+Dim rec As Recordset
+Dim strsql As String
+
+
+Private Sub Command4_Click()
+
+num_partA = Text1.Text
+num_partB = Label3.Caption
+
+If Text1.Text = "" Then
+    Text1.SetFocus
+    MsgBox "ESCANEA EL FOLIO DE LA TARJETA"
+  
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ElseIf num_partB = "225D6423G001" Then
+    
+'Set db = OpenDatabase("C:\test\FCT_PSMEX.mdb") '
+Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\ICT_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+
+g = "SELECT * FROM 6423G001 WHERE Folio = '" & Text1.Text & "'"
+Set resulta = db.OpenRecordset(g)
+
+
+' resulta se guarda de la siguiente manera (ejemplo)
+' |Folio   |  Numero de parte  | Fecha      |  Hora
+' |3001    |   189D2354G004    | 27/7/2012  | 12:00:03 a.m.
+'
+' por lo tanto menejamos el resulta como
+' resulta (0) = Folio
+' resulta (1) = Numero de Parte
+' resulta (2) = Fecha
+' resulta (3) = Hora
+        fe_guar = 0
+        ho_guar = 0
+        mes_guar = 0
+Do While Not resulta.EOF
+fe_ac = resulta(2)
+ho_ac = resulta(3)
+Text2.Text = fe_ac
+'RUTINa   extraer numero de mes
+'  Con esta rutina lo que se hace es eliminar el dia de la fecha actual
+' ejemplo:  19/09/2012
+'  lo qe guardara en mes 09/12
+Text2 = Right(Text2, Len(Text2) - 3)
+mes = Text2.Text
+'fin de la rutin extraer numero de mes
+If mes >= mes_guar Then
+
+    If mes > mes_guar Then
+        fe_guar = 0
+        ho_guar = 0
+        End If
+
+
+If fe_ac >= fe_guar Then
+'Stop
+    If fe_ac > fe_guar Then
+        fe_guar = 0
+        ho_guar = 0
+        End If
+        
+        
+    'Stop
+    If ho_ac >= ho_guar Then
+        fe_guar = resulta(2)
+        ho_guar = resulta(3)
+        mes_guar = mes
+        FO = resulta(0) 'Folio
+        NU = resulta(1) 'Numero de parte
+        Y = resulta(4)   'Result1
+        'Y1 = resulta(5) 'Result2
+        'Y2 = resulta(6) 'Result3
+        'Y3 = resulta(7) 'Result4
+        'Stop
+        End If
+End If
+End If
+resulta.MoveNext
+Loop
+'Stop
+
+Text5.Text = NU 'NUM DE PARTE
+Text4.Text = FO 'FOLIO
+db.Close
+
+    If FO = Nohing Then
+        ICT.Show
+        ElseIf Y = 1 Then 'And Y1 = 1 And Y2 = 1 And Y3 = 1 Then
+            valores = "( '" & FO & "', '" & NU & "',  '" & Label7.Caption & "', '" & Label6.Caption & "','" & 1 & "','" & Label8.Caption & "')"
+            'Set db = OpenDatabase("C:\test\ALFI_PSMEX.mdb") '
+            Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\CALIDAD_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+            
+            Set rec = db.OpenRecordset("6423G001")
+            strsql = "INSERT INTO 6423G001 ([Folio], [PartNum], [Fecha], [Hora], [Result], [Operadora]) " & _
+            "VALUES " & valores
+            db.Execute strsql
+            db.Close
+            Form4.Label4.Caption = NU
+            Form4.Label5.Caption = FO
+            Form4.Show
+         
+        Else
+            valores = "( '" & FO & "', '" & NU & "',  '" & Label7.Caption & "', '" & Label6.Caption & "','" & 0 & "','" & Label8.Caption & "')"
+            'Set db = OpenDatabase("C:\test\ALFI_PSMEX.mdb")
+            Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\CALIDAD_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+            
+            Set rec = db.OpenRecordset("6423G001")
+            strsql = "INSERT INTO 6423G001 ([Folio], [PartNum], [Fecha], [Hora], [Result], [Operadora]) " & _
+            "VALUES " & valores
+            db.Execute strsql
+            db.Close
+            Form3.Label4.Caption = NU
+            Form3.Label5.Caption = FO
+            Form3.Show
+    End If
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ElseIf num_partB = "225D6521G001" Then
+    
+'Set db = OpenDatabase("C:\test\FCT_PSMEX.mdb")
+Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\ICT_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+
+
+g = "SELECT * FROM 6521G001 WHERE Folio = '" & Text1.Text & "'"
+Set resulta = db.OpenRecordset(g)
+
+
+' resulta se guarda de la siguiente manera (ejemplo)
+' |Folio   |  Numero de parte  | Fecha      |  Hora
+' |3001    |   189D2354G004    | 27/7/2012  | 12:00:03 a.m.
+'
+' por lo tanto menejamos el resulta como
+' resulta (0) = Folio
+' resulta (1) = Numero de Parte
+' resulta (2) = Fecha
+' resulta (3) = Hora
+        fe_guar = 0
+        ho_guar = 0
+        mes_guar = 0
+Do While Not resulta.EOF
+fe_ac = resulta(2)
+ho_ac = resulta(3)
+Text2.Text = fe_ac
+'RUTINa   extraer numero de mes
+'  Con esta rutina lo que se hace es eliminar el dia de la fecha actual
+' ejemplo:  19/09/2012
+'  lo qe guardara en mes 09/12
+Text2 = Right(Text2, Len(Text2) - 3)
+mes = Text2.Text
+'fin de la rutin extraer numero de mes
+If mes >= mes_guar Then
+
+    If mes > mes_guar Then
+        fe_guar = 0
+        ho_guar = 0
+        End If
+
+
+If fe_ac >= fe_guar Then
+'Stop
+    If fe_ac > fe_guar Then
+        fe_guar = 0
+        ho_guar = 0
+        End If
+        
+        
+    'Stop
+    If ho_ac >= ho_guar Then
+        fe_guar = resulta(2)
+        ho_guar = resulta(3)
+        mes_guar = mes
+        FO = resulta(0) 'Folio
+        NU = resulta(1) 'Numero de parte
+        Y = resulta(4)   'Result1
+        'Y1 = resulta(5) 'Result2
+        'Y2 = resulta(6) 'Result3
+        'Y3 = resulta(7) 'Result4
+        'Stop
+        End If
+End If
+End If
+resulta.MoveNext
+Loop
+'Stop
+
+Text5.Text = NU 'NUM DE PARTE
+Text4.Text = FO 'FOLIO
+    
+db.Close
+
+    If FO = Nohing Then
+        ICT.Show
+        ElseIf Y = 1 Then 'And Y1 = 1 And Y2 = 1 And Y3 = 1 Then
+            valores = "( '" & FO & "', '" & NU & "',  '" & Label7.Caption & "', '" & Label6.Caption & "','" & 1 & "','" & Label8.Caption & "')"
+            'Set db = OpenDatabase("C:\test\ALFI_PSMEX.mdb")
+            Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\CALIDAD_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+            
+            
+            Set rec = db.OpenRecordset("6521G001")
+            strsql = "INSERT INTO 6521G001 ([Folio], [PartNum], [Fecha], [Hora], [Result], [Operadora]) " & _
+            "VALUES " & valores
+            db.Execute strsql
+            db.Close
+            Form4.Label4.Caption = NU
+            Form4.Label5.Caption = FO
+            Form4.Show
+         
+        Else
+            valores = "( '" & FO & "', '" & NU & "',  '" & Label7.Caption & "', '" & Label6.Caption & "','" & 0 & "','" & Label8.Caption & "')"
+            'Set db = OpenDatabase("C:\test\ALFI_PSMEX.mdb")
+            Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\ALFI_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+            
+            Set rec = db.OpenRecordset("6521G001")
+            strsql = "INSERT INTO 6521G001 ([Folio], [PartNum], [Fecha], [Hora], [Result], [Operadora]) " & _
+            "VALUES " & valores
+            db.Execute strsql
+            db.Close
+            Form3.Label4.Caption = NU
+            Form3.Label5.Caption = FO
+            Form3.Show
+    End If
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ElseIf num_partB = "225D6521G002" Then
+    
+'Set db = OpenDatabase("C:\test\FCT_PSMEX.mdb")
+Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\FCT_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+
+g = "SELECT * FROM 6521G002 WHERE Folio = '" & Text1.Text & "'"
+Set resulta = db.OpenRecordset(g)
+
+
+' resulta se guarda de la siguiente manera (ejemplo)
+' |Folio   |  Numero de parte  | Fecha      |  Hora
+' |3001    |   189D2354G004    | 27/7/2012  | 12:00:03 a.m.
+'
+' por lo tanto menejamos el resulta como
+' resulta (0) = Folio
+' resulta (1) = Numero de Parte
+' resulta (2) = Fecha
+' resulta (3) = Hora
+        fe_guar = 0
+        ho_guar = 0
+        mes_guar = 0
+Do While Not resulta.EOF
+fe_ac = resulta(2)
+ho_ac = resulta(3)
+Text2.Text = fe_ac
+'RUTINa   extraer numero de mes
+'  Con esta rutina lo que se hace es eliminar el dia de la fecha actual
+' ejemplo:  19/09/2012
+'  lo qe guardara en mes 09/12
+Text2 = Right(Text2, Len(Text2) - 3)
+mes = Text2.Text
+'fin de la rutin extraer numero de mes
+If mes >= mes_guar Then
+
+    If mes > mes_guar Then
+        fe_guar = 0
+        ho_guar = 0
+        End If
+
+
+If fe_ac >= fe_guar Then
+'Stop
+    If fe_ac > fe_guar Then
+        fe_guar = 0
+        ho_guar = 0
+        End If
+        
+        
+    'Stop
+    If ho_ac >= ho_guar Then
+        fe_guar = resulta(2)
+        ho_guar = resulta(3)
+        mes_guar = mes
+        FO = resulta(0) 'Folio
+        NU = resulta(1) 'Numero de parte
+        Y = resulta(4)   'Result1
+        'Y1 = resulta(5) 'Result2
+        'Y2 = resulta(6) 'Result3
+        'Y3 = resulta(7) 'Result4
+        'Stop
+        End If
+End If
+End If
+resulta.MoveNext
+Loop
+'Stop
+
+Text5.Text = NU 'NUM DE PARTE
+Text4.Text = FO 'FOLIO
+db.Close
+    
+    If FO = Nohing Then
+        ICT.Show
+        ElseIf Y = 1 Then 'And Y1 = 1 And Y2 = 1 And Y3 = 1 Then
+            valores = "( '" & FO & "', '" & NU & "',  '" & Label7.Caption & "', '" & Label6.Caption & "','" & 1 & "','" & Label8.Caption & "')"
+            'Set db = OpenDatabase("C:\test\ALFI_PSMEX.mdb")
+            Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\ALFI_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+            
+            Set rec = db.OpenRecordset("6521G002")
+            strsql = "INSERT INTO 6521G002 ([Folio], [PartNum], [Fecha], [Hora], [Result], [Operadora]) " & _
+            "VALUES " & valores
+            db.Execute strsql
+            db.Close
+            Form4.Label4.Caption = NU
+            Form4.Label5.Caption = FO
+            Form4.Show
+         
+        Else
+            valores = "( '" & FO & "', '" & NU & "',  '" & Label7.Caption & "', '" & Label6.Caption & "','" & 0 & "','" & Label8.Caption & "')"
+            'Set db = OpenDatabase("C:\test\ALFI_PSMEX.mdb")
+            Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\ALFI_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+
+            Set rec = db.OpenRecordset("6521G002")
+            strsql = "INSERT INTO 6521G002 ([Folio], [PartNum], [Fecha], [Hora], [Result], [Operadora]) " & _
+            "VALUES " & valores
+            db.Execute strsql
+            db.Close
+            Form3.Label4.Caption = NU
+            Form3.Label5.Caption = FO
+            Form3.Show
+    End If
+'''?????????
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ElseIf num_partB = "225D6423G002" Then
+    
+'Set db = OpenDatabase("C:\test\FCT_PSMEX.mdb")
+Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\FCT_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+
+g = "SELECT * FROM 6423G002 WHERE Folio = '" & Text1.Text & "'"
+Set resulta = db.OpenRecordset(g)
+
+
+' resulta se guarda de la siguiente manera (ejemplo)
+' |Folio   |  Numero de parte  | Fecha      |  Hora
+' |3001    |   189D2354G004    | 27/7/2012  | 12:00:03 a.m.
+'
+' por lo tanto menejamos el resulta como
+' resulta (0) = Folio
+' resulta (1) = Numero de Parte
+' resulta (2) = Fecha
+' resulta (3) = Hora
+        fe_guar = 0
+        ho_guar = 0
+        mes_guar = 0
+Do While Not resulta.EOF
+fe_ac = resulta(2)
+ho_ac = resulta(3)
+Text2.Text = fe_ac
+'RUTINa   extraer numero de mes
+'  Con esta rutina lo que se hace es eliminar el dia de la fecha actual
+' ejemplo:  19/09/2012
+'  lo qe guardara en mes 09/12
+Text2 = Right(Text2, Len(Text2) - 3)
+mes = Text2.Text
+'fin de la rutin extraer numero de mes
+If mes >= mes_guar Then
+
+    If mes > mes_guar Then
+        fe_guar = 0
+        ho_guar = 0
+        End If
+
+
+If fe_ac >= fe_guar Then
+'Stop
+    If fe_ac > fe_guar Then
+        fe_guar = 0
+        ho_guar = 0
+        End If
+        
+        
+    'Stop
+    If ho_ac >= ho_guar Then
+        fe_guar = resulta(2)
+        ho_guar = resulta(3)
+        mes_guar = mes
+        FO = resulta(0) 'Folio
+        NU = resulta(1) 'Numero de parte
+        Y = resulta(4)   'Result1
+        'Y1 = resulta(5) 'Result2
+        'Y2 = resulta(6) 'Result3
+        'Y3 = resulta(7) 'Result4
+        'Stop
+        End If
+End If
+End If
+resulta.MoveNext
+Loop
+'Stop
+
+Text5.Text = NU 'NUM DE PARTE
+Text4.Text = FO 'FOLIO
+db.Close
+
+    If FO = Nohing Then
+        ICT.Show
+        ElseIf Y = 1 Then 'And Y1 = 1 And Y2 = 1 And Y3 = 1 Then
+            valores = "( '" & FO & "', '" & NU & "',  '" & Label7.Caption & "', '" & Label6.Caption & "','" & 1 & "','" & Label8.Caption & "')"
+            'Set db = OpenDatabase("C:\test\ALFI_PSMEX.mdb")
+            Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\ALFI_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+            
+            Set rec = db.OpenRecordset("6423G002")
+            strsql = "INSERT INTO 6423G002 ([Folio], [PartNum], [Fecha], [Hora], [Result], [Operadora]) " & _
+            "VALUES " & valores
+            db.Execute strsql
+            db.Close
+            Form4.Label4.Caption = NU
+            Form4.Label5.Caption = FO
+            Form4.Show
+         
+        Else
+            valores = "( '" & FO & "', '" & NU & "',  '" & Label7.Caption & "', '" & Label6.Caption & "','" & 0 & "','" & Label8.Caption & "')"
+            'Set db = OpenDatabase("C:\test\ALFI_PSMEX.mdb")
+            Set db = OpenDatabase("\\servidor-pc\servidor\PSMEX\ALFI_PSMEX.mdb") '\\servidor-pc\servidor\PSMEX
+            
+            Set rec = db.OpenRecordset("6423G002")
+            strsql = "INSERT INTO 6423G002 ([Folio], [PartNum], [Fecha], [Hora], [Result], [Operadora]) " & _
+            "VALUES " & valores
+            db.Execute strsql
+            db.Close
+            Form3.Label4.Caption = NU
+            Form3.Label5.Caption = FO
+            Form3.Show
+    End If
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+       'db.Close
+       
+End If
+            
+   
+           Text1.Text = ""
+          
+               'db.Close
+ 
+    End Sub
+
+
+Private Sub Command2_Click()
+Unload Me
+End Sub
+
+Private Sub Form_Load()
+Timer1.Interval = 1000
+Timer1.Enabled = True
+Move (Screen.Width - Width) \ 2, (Screen.Height - Height) \ 2
+    ChDir App.Path
+    ChDrive App.Path
+    Directorio = App.Path
+    If Len(Directorio) > 3 Then
+        Directorio = Directorio & "\"
+    End If
+MsgBox "Verificar que la Fecha y hora esten correctas!!!"
+End Sub
+
+
+
+Private Sub Text1_KeyPress(KeyAscii As Integer)
+If KeyAscii = 13 Then
+Call Command4_Click
+ElseIf KeyAscii = 27 Then
+Unload Form1
+End If
+End Sub
+
+
+
+Private Sub Timer1_Timer()
+Label6.Caption = Time
+Label7.Caption = Date
+End Sub
+
